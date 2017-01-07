@@ -8,6 +8,9 @@
 #include<sqlite3.h>
 
 
+#include"PreparedStatement.h"
+
+
 SqliteDB::SqliteDB(const std::string &db_file)
     : m_conn(nullptr)
 {
@@ -53,4 +56,16 @@ const char* SqliteDB::errorMsg()
 int SqliteDB::execute(const std::string &sql)
 {
     return sqlite3_exec(m_conn, sql.c_str(), nullptr, nullptr, nullptr);
+}
+
+
+//====================================PreparedStatement=====================
+
+
+std::weak_ptr<PreparedStatement> SqliteDB::createPreparedStatement(const std::string &sql)
+{
+    std::shared_ptr<PreparedStatement> stmt(new PreparedStatement(m_conn, sql));
+
+    m_stmt_list.push_back(stmt);
+    return std::weak_ptr<PreparedStatement>(stmt);
 }
