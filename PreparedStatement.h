@@ -34,6 +34,8 @@ public:
     template<typename... Args>
     int execute(Args && ... args);
 
+    int execute();
+
     const char* errorMsg();
 
 
@@ -58,7 +60,7 @@ private:
 
 
 template<typename... Args>
-inline int PreparedStatement::execute(Args && ... args)
+int PreparedStatement::execute(Args && ... args)
 {
     int ret = SQLITE_OK;
 
@@ -75,6 +77,11 @@ inline int PreparedStatement::execute(Args && ... args)
     return ret;
 }
 
+
+inline PreparedStatement::execute()
+{
+    return sqlite3_step(m_stmt);
+}
 
 template<typename T, typename ... Args>
 int PreparedStatement::bindParams(int param_index, T &&first, Args && ...args)
