@@ -9,14 +9,13 @@
 
 
 PreparedStatement::PreparedStatement(sqlite3 *db, const std::string &sql)
-    : m_db(db),
-      m_stmt(nullptr)
+    : m_stmt(nullptr)
 {
-    int ret = sqlite3_prepare_v2(m_db, sql.c_str(), sql.size(), &m_stmt, nullptr);
+    int ret = sqlite3_prepare_v2(db, sql.c_str(), sql.size(), &m_stmt, nullptr);
 
     if( ret != SQLITE_OK )
     {
-        std::string msg(sqlite3_errmsg(m_db));
+        std::string msg(sqlite3_errmsg(db));
         throw std::runtime_error("fail to create PreparedStatement, reason" + msg);
     }
 }
@@ -46,7 +45,8 @@ int PreparedStatement::close()
 
 const char* PreparedStatement::errorMsg()
 {
-    return sqlite3_errmsg(m_db);
+    sqlite3 *link_db = sqlite3_db_handle(m_stmt);
+    return sqlite3_errmsg(link_db);
 }
 
 

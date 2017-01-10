@@ -68,7 +68,7 @@ void testPreparedStatement()
     std::weak_ptr<PreparedStatement> st = db.createPreparedStatement(sql);
 
     std::shared_ptr<PreparedStatement> stmt = st.lock();
-    int ret = stmt->execute("005", "zhaosi", 86);
+    int ret = stmt->update("005", "zhaosi", 86);
     if( ret != SQLITE_OK && ret != SQLITE_DONE)
         std::cout<<"fail to execute "<<sql<<". reason: "<<stmt->errorMsg()<<std::endl;
 
@@ -76,7 +76,7 @@ void testPreparedStatement()
     sql = "insert into student(id, name, score) values('006', ?, ?)";
     st = db.createPreparedStatement(sql);
     stmt = st.lock();
-    ret = stmt->execute("wangliu", 87);
+    ret = stmt->update("wangliu", 87);
     if( ret != SQLITE_OK && ret != SQLITE_DONE )
         std::cout<<"fail to execute "<<sql<<".. reason: "<<stmt->errorMsg()<<std::endl;
 
@@ -87,7 +87,7 @@ void testPreparedStatement()
     sql = "insert into student(id, name, score) values(?, 'Tom', 79)";
     st = db.createPreparedStatement(sql);
     stmt = st.lock();
-    ret = stmt->execute("007");
+    ret = stmt->update("007");
     if( ret != SQLITE_OK && ret != SQLITE_DONE )
         std::cout<<"fail to execute "<<sql<<".. reason: "<<stmt->errorMsg()<<std::endl;
 
@@ -95,7 +95,7 @@ void testPreparedStatement()
     sql = "insert into student(id, name, score) values('008', 'Jack', 99)";
     st = db.createPreparedStatement(sql);
     stmt = st.lock();
-    ret = stmt->execute();
+    ret = stmt->update();
     if( ret != SQLITE_OK && ret != SQLITE_DONE )
         std::cout<<"fail to execute "<<sql<<".. reason: "<<stmt->errorMsg()<<std::endl;
 

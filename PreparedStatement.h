@@ -32,9 +32,9 @@ public:
 
 
     template<typename... Args>
-    int execute(Args && ... args);
+    int update(Args && ... args);
 
-    int execute();
+    int update();
 
     const char* errorMsg();
 
@@ -54,13 +54,12 @@ private:
     int bindValue(int param_index, const std::string &val);
 
 private:
-    sqlite3 *m_db;//这个不应该被析构，不拥有其所有权
     sqlite3_stmt *m_stmt;
 };
 
 
 template<typename... Args>
-int PreparedStatement::execute(Args && ... args)
+int PreparedStatement::update(Args && ... args)
 {
     int ret = SQLITE_OK;
 
@@ -78,7 +77,7 @@ int PreparedStatement::execute(Args && ... args)
 }
 
 
-inline PreparedStatement::execute()
+inline PreparedStatement::update()
 {
     return sqlite3_step(m_stmt);
 }
