@@ -8,8 +8,11 @@
 #include<stddef.h>
 
 #include<string>
+#include<tuple>
 
 #include<sqlite3.h>
+
+#include"QueryResultSet.h"
 
 class SqliteDB;
 typedef struct sqlite3 sqlite3;
@@ -38,6 +41,11 @@ public:
 
     const char* errorMsg();
 
+
+    template<typename ... Args>
+    std::tuple<int, QueryResultRowSet, QueryResultRowSet> query(Args && ... args);
+
+    std::tuple<int, QueryResultRowSet, QueryResultRowSet> query();
 
 
 private:
@@ -107,6 +115,23 @@ int PreparedStatement::bindParams(int param_index, T &&first)
     int ret = bindValue(param_index, std::forward<T>(first));
     return ret;
 }
+
+
+template<typename ... Args>
+inline std::tuple<int, QueryResultRowSet, QueryResultRowSet> PreparedStatement::query(Args && ... args)
+{
+    int ret = bindParams(1, std::forward<Args>(args)...);
+    return std::make_tuple(ret, QueryResultRowSet(m_stmt, false), QueryResultRowSet(m_stmt, true));
+}
+
+
+
+inline std::tuple<int, QueryResultRowSet, QueryResultRowSet> PreparedStatement::query()
+{
+    return std::make_tuple(SQLITE_OK, QueryResultRowSet(m_stmt, false), QueryResultRowSet(m_stmt, true));
+}
+
+
 
 #endif // PREPAREDSTATEMENT_H
 
