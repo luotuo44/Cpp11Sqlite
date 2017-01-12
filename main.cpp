@@ -102,11 +102,72 @@ void testPreparedStatement()
 }
 
 
+void testQueryPreparedStatement()
+{
+    SqliteDB db("test.db");
+
+    std::string sql("select id, name, score from student");
+
+    std::weak_ptr<PreparedStatement> st = db.createPreparedStatement(sql);
+
+    std::shared_ptr<PreparedStatement> stmt = st.lock();
+
+    int ret;
+    QueryResultRowSet begin, end;
+    std::tie(ret, begin, end) = stmt->query();
+
+    if( ret != SQLITE_OK )
+    {
+        std::cout<<"fail to query "<<stmt->errorMsg()<<std::endl;
+        return ;
+    }
+
+
+    for(; begin != end; ++begin)
+    {
+        auto col = *begin;
+
+        std::string id = col.getColumn<std::string>(0);
+        std::string name = col.getColumn<std::string>(1);
+        int score = col.getColumn<int>(2);
+
+        std::cout<<id<<"\t"<<name<<"\t"<<score<<std::endl;
+    }
+
+
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    std::cout<<"\n\n second query "<<std::endl;
+    sql = "select * from student where score > ?";
+    st = db.createPreparedStatement(sql);
+    stmt = st.lock();
+    std::tie(ret, begin, end) = stmt->query(80);
+
+    if( ret != SQLITE_OK )
+    {
+        std::cout<<"select * fail. Reason: "<<stmt->errorMsg()<<std::endl;
+    }
+
+
+    for(; begin != end; ++begin)
+    {
+        auto col = *begin;
+
+        std::string id = col.getColumn<std::string>(0);
+        std::string name = col.getColumn<std::string>(1);
+        int score = col.getColumn<int>(2);
+
+        std::cout<<id<<"\t"<<name<<"\t"<<score<<std::endl;
+    }
+}
+
 
 int main()
 {
     //testBaseExecute();
-    testPreparedStatement();
+    //testPreparedStatement();
+
+    testQueryPreparedStatement();
 
     cout << "Hello World!" << endl;
     return 0;
