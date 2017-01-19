@@ -34,19 +34,18 @@ public:
     int close();
 
 
+    int update();
     template<typename... Args>
     int update(Args && ... args);
 
-    int update();
+    int reset();
 
-    const char* errorMsg();
-
-
+    std::tuple<int, QueryResultRowSet, QueryResultRowSet> query();
     template<typename ... Args>
     std::tuple<int, QueryResultRowSet, QueryResultRowSet> query(Args && ... args);
 
-    std::tuple<int, QueryResultRowSet, QueryResultRowSet> query();
 
+    const char* errorMsg();
 
 private:
     template<typename T, typename... Args>

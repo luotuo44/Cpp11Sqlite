@@ -43,6 +43,11 @@ int PreparedStatement::close()
 }
 
 
+int PreparedStatement::reset()
+{
+    return sqlite3_reset(m_stmt);
+}
+
 const char* PreparedStatement::errorMsg()
 {
     sqlite3 *link_db = sqlite3_db_handle(m_stmt);

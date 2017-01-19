@@ -70,7 +70,24 @@ void testPreparedStatement()
     std::shared_ptr<PreparedStatement> stmt = st.lock();
     int ret = stmt->update("005", "zhaosi", 86);
     if( ret != SQLITE_OK && ret != SQLITE_DONE)
+    {
         std::cout<<"fail to execute "<<sql<<". reason: "<<stmt->errorMsg()<<std::endl;
+        return ;
+    }
+
+    ret = stmt->reset();
+    if( ret != SQLITE_OK )
+    {
+        std::cout<<"fial to reset "<<sql<<". reason: "<<stmt->errorMsg()<<std::endl;
+        return ;
+    }
+
+    ret = stmt->update("004", "test", 73);
+    if( ret != SQLITE_OK && ret != SQLITE_DONE)
+    {
+        std::cout<<"fail to execute "<<sql<<". reason: "<<stmt->errorMsg()<<std::endl;
+        return ;
+    }
 
 
     sql = "insert into student(id, name, score) values('006', ?, ?)";
@@ -165,9 +182,9 @@ void testQueryPreparedStatement()
 int main()
 {
     //testBaseExecute();
-    //testPreparedStatement();
+    testPreparedStatement();
 
-    testQueryPreparedStatement();
+    //testQueryPreparedStatement();
 
     cout << "Hello World!" << endl;
     return 0;
