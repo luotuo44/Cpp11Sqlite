@@ -8,6 +8,7 @@
 #include<iterator>
 #include<string>
 #include<stdexcept>
+#include<map>
 
 
 typedef struct sqlite3_stmt sqlite3_stmt;
@@ -18,23 +19,28 @@ public:
     QueryResultColumn(sqlite3_stmt *stmt, int column_num);
 
     template<typename T>
-    T getColumn(int col);
+    T getColumn(int col)const;
+
+    //根据列名获取，如果查询语句中使用了as别名方式，那么这里使用别名获取
+    template<typename T>
+    T getColumn(const std::string &column_name)const;
 
 private:
 
-    int getColumnValue(int col, int );
-    double getColumnValue(int col, double);
-    std::string getColumnValue(int col, const std::string&);
+    int getColumnValue(int col, int )const;
+    double getColumnValue(int col, double)const;
+    std::string getColumnValue(int col, const std::string&)const;
 
 private:
-    sqlite3_stmt *m_stmt;
+    mutable sqlite3_stmt *m_stmt;
     int m_column_num;
+    std::map<std::string, int> m_column_name_index;
 };
 
 
 
 template<typename T>
-T QueryResultColumn::getColumn(int col)
+T QueryResultColumn::getColumn(int col) const
 {
     if( col < 0 && col >= m_column_num)
     {
@@ -42,6 +48,20 @@ T QueryResultColumn::getColumn(int col)
     }
 
     return getColumnValue(col, T());
+}
+
+
+//根据列名获取，如果查询语句中使用了as别名方式，那么这里使用别名获取
+template<typename T>
+T QueryResultColumn::getColumn(const std::string &column_name)const
+{
+    auto it = m_column_name_index.find(column_name);
+    if( it == m_column_name_index.end() )
+    {
+        throw std::out_of_range("cannot find column: " + column_name);
+    }
+
+    return getColumn<T>(it->second);
 }
 
 
@@ -74,8 +94,8 @@ public:
     QueryResultRowSet(const QueryResultRowSet &rs)=default;
     QueryResultRowSet& operator = (const QueryResultRowSet &rs)=default;
 
-    const_reference operator * ();
-    const_pointer operator -> ();
+    value_type operator * ();
+    pointer operator -> ();
 
     self& operator ++ ();
 

@@ -12,22 +12,26 @@ QueryResultColumn::QueryResultColumn(sqlite3_stmt *stmt, int column_num)
     : m_stmt(stmt),
       m_column_num(column_num)
 {
+    for(int col = 0; col < column_num; ++col)
+    {
+        std::string col_name = sqlite3_column_name(m_stmt, col);
+        m_column_name_index.insert(std::make_pair(col_name, col));
+    }
 }
 
 
-
-int QueryResultColumn::getColumnValue(int col, int )
+int QueryResultColumn::getColumnValue(int col, int )const
 {
     return sqlite3_column_int(m_stmt, col);
 }
 
-double QueryResultColumn::getColumnValue(int col, double)
+double QueryResultColumn::getColumnValue(int col, double)const
 {
     return sqlite3_column_double(m_stmt, col);
 }
 
 
-std::string QueryResultColumn::getColumnValue(int col, const std::string&)
+std::string QueryResultColumn::getColumnValue(int col, const std::string&) const
 {
     const char *str = reinterpret_cast<const char*>(sqlite3_column_text(m_stmt, col));
     return std::string(str);
@@ -60,13 +64,13 @@ QueryResultRowSet::QueryResultRowSet(sqlite3_stmt *stmt, bool is_end)
 
 
 
-QueryResultRowSet::const_reference QueryResultRowSet::operator *()
+QueryResultRowSet::value_type QueryResultRowSet::operator *()
 {
     return QueryResultColumn(m_stmt, m_column_num);
 }
 
 
-QueryResultRowSet::const_pointer QueryResultRowSet::operator -> ()
+QueryResultRowSet::pointer QueryResultRowSet::operator -> ()
 {
     return &(operator*());
 }
