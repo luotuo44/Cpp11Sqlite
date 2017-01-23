@@ -176,6 +176,49 @@ void testQueryPreparedStatement()
 
         std::cout<<id<<"\t"<<name<<"\t"<<score<<std::endl;
     }
+
+    //==========================================================================
+
+    //查询结果为空
+    std::cout<<"\n\n third query"<<std::endl;
+    stmt->reset();
+
+    std::tie(ret, begin, end) = stmt->query(99);
+    if( ret != SQLITE_OK )
+    {
+        std::cout<<"select * fail. Reason: "<<stmt->errorMsg()<<std::endl;
+    }
+
+    for(; begin != end; ++begin)
+    {
+        auto col = *begin;
+
+        std::string id = col.getColumn<std::string>(0);
+        std::string name = col.getColumn<std::string>(1);
+        int score = col.getColumn<int>(2);
+
+        std::cout<<id<<"\t"<<name<<"\t"<<score<<std::endl;
+    }
+
+
+    //=========================================================================
+    //使用列名访问查询结果
+    std::cout<<"4 query"<<std::endl;
+
+    sql = "select name, score as sc from student";
+    st = db.createPreparedStatement(sql);
+    stmt = st.lock();
+
+    std::tie(ret, begin, end) = stmt->query();
+    for(; begin != end; ++begin)
+    {
+        auto col = *begin;
+
+        std::string name = col.getColumn<std::string>("name");
+        int score = col.getColumn<int>("sc");
+
+        std::cout<<name<<"\t"<<score<<std::endl;
+    }
 }
 
 
@@ -235,9 +278,9 @@ int main()
     //testBaseExecute();
     //testPreparedStatement();
 
-    //testQueryPreparedStatement();
+    testQueryPreparedStatement();
 
-    testInsertMany();
+    //testInsertMany();
 
     cout << "Hello World!" << endl;
     return 0;
