@@ -16,6 +16,7 @@ typedef struct sqlite3_stmt sqlite3_stmt;
 class QueryResultColumn
 {
 public:
+    QueryResultColumn();
     QueryResultColumn(sqlite3_stmt *stmt, int column_num);
 
     template<typename T>
@@ -28,6 +29,7 @@ public:
 private:
 
     int getColumnValue(int col, int )const;
+    int64_t getColumnValue(int col, int64_t)const;
     double getColumnValue(int col, double)const;
     std::string getColumnValue(int col, const std::string&)const;
 
@@ -94,10 +96,11 @@ public:
     QueryResultRowSet(const QueryResultRowSet &rs)=default;
     QueryResultRowSet& operator = (const QueryResultRowSet &rs)=default;
 
-    value_type operator * ();
-    pointer operator -> ();
+    const_reference operator * ()const;
+    const_pointer operator -> ()const;
 
     self& operator ++ ();
+    self  operator ++ (int);
 
 
     bool operator == (const QueryResultRowSet &rs)const;
@@ -111,6 +114,8 @@ private:
     sqlite3_stmt *m_stmt;
     int m_row_index;
     int m_column_num;
+
+    QueryResultColumn m_current_column;
 };
 
 #endif // QUERYRESULTSET_H

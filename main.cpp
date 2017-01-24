@@ -219,6 +219,26 @@ void testQueryPreparedStatement()
 
         std::cout<<name<<"\t"<<score<<std::endl;
     }
+    stmt->close();
+
+    //=========================================================================
+    //规范化InputIterator
+    std::cout<<" 5 query "<<std::endl;
+    sql = "select id, score from student";
+    st = db.createPreparedStatement(sql);
+    stmt = st.lock();
+
+    std::tie(ret, begin, end) = stmt->query();
+    while(begin != end)
+    {
+        auto it = begin;
+        std::string id = it->getColumn<std::string>("id");
+
+        auto col = *begin++;
+        int score = col.getColumn<int>(1);
+
+        std::cout<<id<<"\t"<<score<<std::endl;
+    }
 }
 
 

@@ -8,6 +8,12 @@
 #include<sqlite3.h>
 
 
+QueryResultColumn::QueryResultColumn()
+    : m_stmt(nullptr),
+      m_column_num(0)
+{
+}
+
 QueryResultColumn::QueryResultColumn(sqlite3_stmt *stmt, int column_num)
     : m_stmt(stmt),
       m_column_num(column_num)
@@ -24,6 +30,13 @@ int QueryResultColumn::getColumnValue(int col, int )const
 {
     return sqlite3_column_int(m_stmt, col);
 }
+
+
+int64_t QueryResultColumn::getColumnValue(int col, int64_t)const
+{
+    return sqlite3_column_int64(m_stmt, col);
+}
+
 
 double QueryResultColumn::getColumnValue(int col, double)const
 {
@@ -64,13 +77,13 @@ QueryResultRowSet::QueryResultRowSet(sqlite3_stmt *stmt, bool is_end)
 
 
 
-QueryResultRowSet::value_type QueryResultRowSet::operator *()
+QueryResultRowSet::const_reference QueryResultRowSet::operator *() const
 {
-    return QueryResultColumn(m_stmt, m_column_num);
+    return m_current_column;
 }
 
 
-QueryResultRowSet::pointer QueryResultRowSet::operator -> ()
+QueryResultRowSet::const_pointer QueryResultRowSet::operator -> () const
 {
     return &(operator*());
 }
@@ -84,6 +97,13 @@ QueryResultRowSet::self& QueryResultRowSet::operator ++ ()
 }
 
 
+QueryResultRowSet::self  QueryResultRowSet::operator ++ (int)
+{
+    QueryResultRowSet tmp = *this;
+    ++(*this);
+    return tmp;
+}
+
 
 void QueryResultRowSet::nextRow()
 {
@@ -92,9 +112,15 @@ void QueryResultRowSet::nextRow()
 
     int ret = sqlite3_step(m_stmt);
     if( ret == SQLITE_ROW )//获得新的一行
+    {
         ++m_row_index;
+        m_current_column = QueryResultColumn(m_stmt, m_column_num);
+    }
     else if( ret == SQLITE_DONE )//已经取得所有的行
+    {
         m_row_index = -1;
+        m_current_column = QueryResultColumn();
+    }
     else //失败
     {
         sqlite3 *link_db = sqlite3_db_handle(m_stmt);
