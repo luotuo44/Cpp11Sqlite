@@ -20,8 +20,7 @@ QueryResultColumn::QueryResultColumn(sqlite3_stmt *stmt, int column_num)
 {
     for(int col = 0; col < column_num; ++col)
     {
-        std::string col_name = sqlite3_column_name(m_stmt, col);
-        m_column_name_index.insert(std::make_pair(col_name, col));
+        m_column_name_index.emplace_back(sqlite3_column_name(m_stmt, col));
     }
 }
 

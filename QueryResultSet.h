@@ -8,7 +8,8 @@
 #include<iterator>
 #include<string>
 #include<stdexcept>
-#include<map>
+#include<vector>
+#include<algorithm>
 
 
 typedef struct sqlite3_stmt sqlite3_stmt;
@@ -36,7 +37,8 @@ private:
 private:
     mutable sqlite3_stmt *m_stmt;
     int m_column_num;
-    std::map<std::string, int> m_column_name_index;
+    //使用vector而不是典型的map。因为map多于复杂，并且列数并不会太多，map查找的优势没有得到体现
+    std::vector<std::string> m_column_name_index;
 };
 
 
@@ -57,13 +59,13 @@ T QueryResultColumn::getColumn(int col) const
 template<typename T>
 T QueryResultColumn::getColumn(const std::string &column_name)const
 {
-    auto it = m_column_name_index.find(column_name);
+    auto it = std::find(m_column_name_index.begin(), m_column_name_index.end(), column_name);
     if( it == m_column_name_index.end() )
     {
         throw std::out_of_range("cannot find column: " + column_name);
     }
 
-    return getColumn<T>(it->second);
+    return getColumn<T>(std::distance(m_column_name_index.begin(), it));
 }
 
 
