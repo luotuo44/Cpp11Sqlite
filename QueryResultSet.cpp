@@ -18,6 +18,7 @@ QueryResultColumn::QueryResultColumn(sqlite3_stmt *stmt, int column_num)
     : m_stmt(stmt),
       m_column_num(column_num)
 {
+    m_column_name_index.reserve(m_column_num);
     for(int col = 0; col < column_num; ++col)
     {
         m_column_name_index.emplace_back(sqlite3_column_name(m_stmt, col));
