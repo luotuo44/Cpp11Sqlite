@@ -19,10 +19,16 @@ int testBaseExecute()
 {
     SqliteDB db("test.db");
 
+    int ret = db.execute("drop table if exists student");
+    if( ret != SQLITE_OK )
+    {
+        std::cout<<"fail to drop table "<<db.errorMsg()<<std::endl;
+        return -1;
+    }
 
     std::string sql = "create table if not exists student(id varchar(32) primary key, "
                       "name varchar(128), score int)";
-    int ret = db.execute(sql);
+    ret = db.execute(sql);
     if( ret != SQLITE_OK )
     {
         std::cout<<"fail to create table, "<<db.errorMsg()<<std::endl;
@@ -295,10 +301,10 @@ int testInsertMany()
 
 int main()
 {
-    //testBaseExecute();
+    testBaseExecute();
     //testPreparedStatement();
 
-    testQueryPreparedStatement();
+    //testQueryPreparedStatement();
 
     //testInsertMany();
 
