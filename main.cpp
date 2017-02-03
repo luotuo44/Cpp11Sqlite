@@ -261,6 +261,13 @@ int testInsertMany()
         return -1;
     }
 
+    ret = db.execute("delete from student");
+    if(ret != SQLITE_OK )
+    {
+        std::cout<<"fail to clear student table"<<std::endl;
+        return -1;
+    }
+
     std::vector<std::tuple<std::string, std::string, int>> vec;
     vec.emplace_back(std::make_tuple(std::string("001"), std::string("aa"), 81));
     vec.emplace_back(std::make_tuple(std::string("002"), std::string("bb"), 82));
@@ -275,7 +282,7 @@ int testInsertMany()
     ret = db.executemany(sql, vec);
     if( ret != SQLITE_OK )
     {
-        std::cout<<"fail to insertmany "<<db.errorMsg()<<std::endl;
+        std::cout<<"fail to insert many "<<db.errorMsg()<<std::endl;
         return -1;
     }
 
@@ -302,11 +309,11 @@ int testInsertMany()
 int main()
 {
     testBaseExecute();
-    //testPreparedStatement();
+    testPreparedStatement();
 
-    //testQueryPreparedStatement();
+    testQueryPreparedStatement();
 
-    //testInsertMany();
+    testInsertMany();
 
     cout << "Hello World!" << endl;
     return 0;
