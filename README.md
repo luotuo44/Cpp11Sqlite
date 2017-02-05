@@ -5,6 +5,7 @@
 ##没有返回数据的语句
 ###不影响数据集的语句
 ####表操作语句
+```cpp
     SqliteDB db("test.db");
 
     int ret = db.execute("drop table if exists student");
@@ -22,4 +23,4 @@
         std::cout<<"fail to create table, "<<db.errorMsg()<<std::endl;
         return -1;
     }
-
+```
