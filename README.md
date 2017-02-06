@@ -24,3 +24,25 @@
         return -1;
     }
 ```
+
+
+####简单插入语句
+```cpp
+    sql = "insert into student(id, name, score) values(\"001\", \"xiaoming\", 99)";
+    ret = db.execute(sql);
+    if( ret != SQLITE_OK )
+    {
+        std::cout<<"fail to insert, "<<db.errorMsg()<<std::endl;
+        return -1;
+    }
+
+
+    sql = "insert into student values('002', 'zhangsan', 80)";
+    ret = db.execute(sql);
+    if( ret != SQLITE_OK )
+    {
+        std::cout<<"fail to insert, "<<db.errorMsg()<<std::endl;
+        return -1;
+    }
+```
+
