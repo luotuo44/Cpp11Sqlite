@@ -86,3 +86,57 @@
     }
 ```
 
+
+
+####prepared statement插入，所以参数都未知
+```cpp
+    SqliteDB db("test.db");
+
+    std::string sql("insert into student(id, name, score) values(?, ?, ?)");
+
+    std::weak_ptr<PreparedStatement> st = db.createPreparedStatement(sql);
+
+    std::shared_ptr<PreparedStatement> stmt = st.lock();
+    int ret = stmt->update("005", "zhaosi", 86);
+    if( ret != SQLITE_OK && ret != SQLITE_DONE)
+    {
+        std::cout<<"fail to execute "<<sql<<". reason: "<<stmt->errorMsg()<<std::endl;
+        return ;
+    }
+
+    ret = stmt->reset();
+    if( ret != SQLITE_OK )
+    {
+        std::cout<<"fial to reset "<<sql<<". reason: "<<stmt->errorMsg()<<std::endl;
+        return ;
+    }
+
+    ret = stmt->update("004", "test", 73);
+    if( ret != SQLITE_OK && ret != SQLITE_DONE)
+    {
+        std::cout<<"fail to execute "<<sql<<". reason: "<<stmt->errorMsg()<<std::endl;
+        return ;
+    }
+```
+
+####prepared statement插入，部分参数未知
+```cpp
+    SqliteDB db("test.db");
+    std::string sql = "insert into student(id, name, score) values('006', ?, ?)";
+    std::weak_ptr<PreparedStatement> st = db.createPreparedStatement(sql);
+    std::shared_ptr<PreparedStatement> stmt = st.lock();
+    int ret = stmt->update("wangliu", 87);
+    if( ret != SQLITE_OK && ret != SQLITE_DONE )
+        std::cout<<"fail to execute "<<sql<<".. reason: "<<stmt->errorMsg()<<std::endl;
+
+    ret = stmt->close();//支持手动关闭PreparedStatement，可以检查其返回值。
+    assert(ret == SQLITE_OK);
+
+
+    sql = "insert into student(id, name, score) values(?, 'Tom', 79)";
+    st = db.createPreparedStatement(sql);
+    stmt = st.lock();
+    ret = stmt->update("007");
+    if( ret != SQLITE_OK && ret != SQLITE_DONE )
+        std::cout<<"fail to execute "<<sql<<".. reason: "<<stmt->errorMsg()<<std::endl;
+```
