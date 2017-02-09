@@ -175,12 +175,12 @@
 ```
 
 输出结果
-id   |   name       |  score
------|--------------|-------
-001  |   xiaoming   |   99
-005  |   zhaosi     |   86
-006  |   wangliu    |   87
-008  |   Jack       |   99
+|id   |   name       |  score|
+|-----|--------------|-------|
+|001  |   xiaoming   |   99|
+|005  |   zhaosi     |   86|
+|006  |   wangliu    |   87|
+|008  |   Jack       |   99|
 
 
 
@@ -209,12 +209,12 @@ id   |   name       |  score
 ```
 
 输出结果:
-name       | score
------------|--------
-xiaoming   |  99
-zhangsan   |  80
-zhaosi     |  86
-test       |  73
-wangliu    |  87
-Tom        |  79
-Jack       |  99
+|name       | score|
+|-----------|------|
+|xiaoming   |  99|
+|zhangsan   |  80|
+|zhaosi     |  86|
+|test       |  73|
+|wangliu    |  87|
+|Tom        |  79|
+|Jack       |  99|
