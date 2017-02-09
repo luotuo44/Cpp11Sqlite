@@ -140,3 +140,81 @@
     if( ret != SQLITE_OK && ret != SQLITE_DONE )
         std::cout<<"fail to execute "<<sql<<".. reason: "<<stmt->errorMsg()<<std::endl;
 ```
+
+##带返回数据的语句
+####使用列序号访问一行数据
+
+```cpp
+    SqliteDB db("test.db");
+    std::string sql("select * from student score > ?");
+    std::weak_ptr<PreparedStatement> st = db.createPreparedStatement(sql);
+    std::shared_ptr<PreparedStatement> stmt = st.lock();
+
+    int ret;
+    QueryResultRowSet begin, end;
+    std::tie(ret, begin, end) = stmt->query(80);
+
+    if( ret != SQLITE_OK )
+    {
+        std::cout<<"fail to query "<<stmt->errorMsg()<<std::endl;
+        return ;
+    }
+
+
+    std::cout<<"id\tname\tscore"<<std::endl;
+    for(; begin != end; ++begin)
+    {
+        auto col = *begin;
+
+        std::string id = col.getColumn<std::string>(0);
+        std::string name = col.getColumn<std::string>(1);
+        int score = col.getColumn<int>(2);
+
+        std::cout<<id<<"\t"<<name<<"\t"<<score<<std::endl;
+    }
+```
+
+输出结果
+id   |   name       |  score
+-----|--------------|-------
+001  |   xiaoming   |   99
+005  |   zhaosi     |   86
+006  |   wangliu    |   87
+008  |   Jack       |   99
+
+
+
+####使用列名访问一行数据
+
+```cpp
+    SqliteDB db("test.db");
+    std::string sql = "select name, score as sc from student";
+    std::weak_ptr<PreparedStatement> st = db.createPreparedStatement(sql);
+    std::shared_ptr<PreparedStatement> stmt = st.lock();
+
+    int ret;
+    QueryResultRowSet begin, end;
+    std::tie(ret, begin, end) = stmt->query();
+    std::cout<<"name\tscore"<<std::endl;
+    while(begin != end)
+    {
+        auto col = *begin++;
+
+        std::string name = col.getColumn<std::string>("name");
+        int score = col.getColumn<int>("sc");
+
+        std::cout<<name<<"\t"<<score<<std::endl;
+    }
+    stmt->close();//主动关闭
+```
+
+输出结果:
+name       | score
+-----------|--------
+xiaoming   |  99
+zhangsan   |  80
+zhaosi     |  86
+test       |  73
+wangliu    |  87
+Tom        |  79
+Jack       |  99
