@@ -1,10 +1,14 @@
 # Cpp11Sqlite
 用C++ 11 封装sqlite的C接口。封装的接口简洁、易用，并支持prepared statement以及批量插入。
 
-#使用例子
-##没有返回数据的语句
-###不影响数据集的语句
-####表操作语句
+# 使用例子
+
+## 没有返回数据的语句
+
+### 不影响数据集的语句
+
+#### 表操作语句
+
 ```cpp
     SqliteDB db("test.db");
 
@@ -26,7 +30,8 @@
 ```
 
 
-####简单插入语句
+#### 简单插入语句
+
 ```cpp
     sql = "insert into student(id, name, score) values(\"001\", \"xiaoming\", 99)";
     ret = db.execute(sql);
@@ -46,7 +51,8 @@
     }
 ```
 
-####批量插入语法1
+#### 批量插入语法1
+
 > 对应sql语法: insert into student(id, name, score) values('001', 'aa', 81),('002', 'bb', 82)('003', 'cc', 83),('004', 'dd', 84);
 
 ```cpp
@@ -66,7 +72,8 @@
     }
 ```
 
-####批量插入语法2
+#### 批量插入语法2
+
 > 对应sql语法: insert into student(id, name, score)  select '005', 'ee', 85 union all select '006', 'ff', 86 union all  select '007', 'gg', 87
 
 ```cpp
@@ -88,7 +95,8 @@
 
 
 
-####prepared statement插入，所以参数都未知
+#### prepared statement插入，所以参数都未知
+
 ```cpp
     SqliteDB db("test.db");
 
@@ -119,7 +127,8 @@
     }
 ```
 
-####prepared statement插入，部分参数未知
+#### prepared statement插入，部分参数未知
+
 ```cpp
     SqliteDB db("test.db");
     std::string sql = "insert into student(id, name, score) values('006', ?, ?)";
@@ -141,8 +150,10 @@
         std::cout<<"fail to execute "<<sql<<".. reason: "<<stmt->errorMsg()<<std::endl;
 ```
 
-##带返回数据的语句
-####使用列序号访问一行数据
+## 带返回数据的语句
+
+#### 使用列序号访问一行数据
+
 
 ```cpp
     SqliteDB db("test.db");
@@ -185,7 +196,7 @@
 
 
 
-####使用列名访问一行数据
+#### 使用列名访问一行数据
 
 ```cpp
     SqliteDB db("test.db");
