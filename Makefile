@@ -25,6 +25,6 @@ $(objects):%.o : %.cpp
 	
 .PHONY:clean
 clean:
-	$(RM) *.o
+	$(RM) $(objects)
 	$(RM) main.exe
 	
