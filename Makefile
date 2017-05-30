@@ -6,6 +6,14 @@ objects = $(patsubst %.cpp, %.o, $(src))
 INCLUDE = -Isqlite3
 LIBS = -Lsqlite3 -lsqlite3
 
+
+ifeq ($(OS), Windows_NT)
+	RM = del
+else
+	RM = rm -f
+endif
+
+
 main: $(objects)
 	g++  $(objects) $(LIBS) $(FLAGS) -o $@
 
@@ -13,7 +21,10 @@ main: $(objects)
 $(objects):%.o : %.cpp 
 	g++ -c $(FLAGS) $(INCLUDE)  $<  -o $@
 
-
+	
+	
 .PHONY:clean
 clean:
-	-rm -f *.o main
+	$(RM) *.o
+	$(RM) main.exe
+	
