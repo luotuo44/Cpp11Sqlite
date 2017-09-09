@@ -84,7 +84,7 @@ int PreparedStatement::update(Args && ... args)
 }
 
 
-inline PreparedStatement::update()
+inline int PreparedStatement::update()
 {
     return sqlite3_step(m_stmt);
 }
