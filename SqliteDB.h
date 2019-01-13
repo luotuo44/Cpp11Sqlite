@@ -17,7 +17,7 @@ class PreparedStatement;
 class SqliteDB
 {
 public:
-    SqliteDB(const std::string &db_file);
+    explicit SqliteDB(const std::string &db_file);
 
     SqliteDB(const SqliteDB&)=delete;
     SqliteDB& operator = (const SqliteDB&)=delete;
